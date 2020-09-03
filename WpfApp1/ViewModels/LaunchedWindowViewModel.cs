@@ -5,7 +5,7 @@ using WpfApp1.ViewModels.Commands;
 
 namespace WpfApp1.ViewModels
 {
-    public class LaunchedWindowViewModel : WindowedViewModelBase, ViewModelBase.IPropertyListener<IntPtr>, ViewModelBase.IPropertyListener<SyncParentWindowCommand>, IViewRenderedListener, IParentHandleListener
+    public class LaunchedWindowViewModel : WindowedViewModelBase, ViewModelBase.IPropertyListener<IntPtr>, ViewModelBase.IPropertyListener<SyncParentWindowCommand>, ViewModelBase.IPropertyListener<bool>, IViewRenderedListener, IParentHandleListener
     {
         private readonly Property<IntPtr> _thisHandleProperty;
         private readonly Property<IntPtr> _parentHandleProperty;
@@ -13,6 +13,7 @@ namespace WpfApp1.ViewModels
         private readonly Property<IntPtr> _ancestorHandleProperty;
         private readonly Property<IntPtr> _originalAncestorProperty;
         private readonly Property<IntPtr> _setParentResultProperty;
+        private readonly Property<bool> _parentImmediatelyProperty;
 
         private readonly Func<Window, IWindowHandleService> _serviceFactory;
         private IWindowHandleService _service;
@@ -30,6 +31,7 @@ namespace WpfApp1.ViewModels
             _ancestorHandleProperty = RegisterProperty(this, nameof(AncestorHandle), () => IntPtr.Zero);
             _originalAncestorProperty = RegisterProperty(this, nameof(OriginalAncestor), () => IntPtr.Zero);
             _setParentResultProperty = RegisterProperty(this, nameof(SetParentResult), () => IntPtr.Zero);
+            _parentImmediatelyProperty = RegisterProperty(this, nameof(ParentImmediately), () => false);
         }
 
         private void RefreshHandles()
@@ -75,12 +77,18 @@ namespace WpfApp1.ViewModels
             OnPropertyChanged(propertyName);
         }
 
-        protected override void OnWindowProviderUpdated(IWindowProvider provider)
+        protected override void OnWindowProviderUpdated(IWindowProvider provider, Func<Window, IWindowProvider> factory)
         {
             _service = _serviceFactory(provider.GetWindow());
             SyncParentWindowCommand = new SyncParentWindowCommand(_service, this);
             UnSyncParentWindowCommand = new UnSyncParentWindowCommand(_service, this);
+
             RefreshHandles();
+        }
+
+        protected override void OnParentImmediatelyUpdated(bool parentImmediately)
+        {
+            ParentImmediately = parentImmediately;
         }
 
         public void OnContentRendered()
@@ -90,6 +98,11 @@ namespace WpfApp1.ViewModels
             UnSyncParentWindowCommand = new UnSyncParentWindowCommand(_service, this);
             RefreshHandles();
             OriginalAncestor = AncestorHandle;
+            if(ParentImmediately)
+            {
+                SetParentResult = _service.SetParent(OwnerHandle);
+                RefreshHandles();
+            }
         }
 
         public void UpdateValue(string propertyName, SyncParentWindowCommand value)
@@ -133,9 +146,20 @@ namespace WpfApp1.ViewModels
             }
         }
 
+        public bool ParentImmediately 
+        {
+            get => _parentImmediatelyProperty.Value;
+            set => _parentImmediatelyProperty.Value = value;
+        }
+
         public void UpdateHandles()
         {
             RefreshHandles();
+        }
+
+        public void UpdateValue(string propertyName, bool value)
+        {
+            OnPropertyChanged(propertyName);
         }
     }
 }

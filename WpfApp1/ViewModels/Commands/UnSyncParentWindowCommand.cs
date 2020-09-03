@@ -23,6 +23,7 @@ namespace WpfApp1.ViewModels.Commands
         {
             var result = _windowService.SetParent((IntPtr)parameter);
             Debug.WriteLine(result);
+            _handleListener.SetParentResult = result;
             _handleListener.UpdateHandles();
         }
 

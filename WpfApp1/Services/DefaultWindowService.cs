@@ -1,4 +1,7 @@
-﻿using WpfApp1.Factory;
+﻿using System;
+using System.Windows;
+using WpfApp1.Factory;
+using WpfApp1.ViewModels;
 
 namespace WpfApp1.Services
 {
@@ -11,10 +14,10 @@ namespace WpfApp1.Services
             _factory = factory;
         }
 
-        public void LaunchNewWindow(IWindowProvider provider)
+        public void LaunchNewWindow(IWindowProvider provider, Func<Window, IWindowProvider> providerFactory, bool parentImmediately)
         {
-            var window = _factory.GetLaunchedWindow(provider.GetWindow());
-            window.Show();
+            var window = _factory.GetLaunchedWindow(provider, providerFactory, parentImmediately);
+            window.GetWindow().Show();
         }
     }
 }

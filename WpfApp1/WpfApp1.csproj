@@ -75,6 +75,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Converters\BooleanConverterBase.cs" />
+    <Compile Include="Converters\EqualsComparisonConverter.cs" />
+    <Compile Include="Converters\ValueConverterBase.cs" />
+    <Compile Include="Converters\VisibilityConverter.cs" />
+    <Compile Include="Extensions\AttachedPropertiesHelper.cs" />
     <Compile Include="Extensions\GridExtendedProperties.cs" />
     <Compile Include="Extensions\LaunchedWindowViewModelAttachedProperty.cs" />
     <Compile Include="Extensions\ViewModelAttachedProperty.cs" />

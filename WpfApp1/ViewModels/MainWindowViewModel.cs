@@ -34,10 +34,10 @@ namespace WpfApp1.ViewModels
             OnPropertyChanged(propertyName);
         }
 
-        protected override void OnWindowProviderUpdated(IWindowProvider provider)
+        protected override void OnWindowProviderUpdated(IWindowProvider provider, Func<Window, IWindowProvider> providerFactory)
         {
-            base.OnWindowProviderUpdated(provider);
-            _launchWindowCommand = new LaunchWindowCommand(_windowsService, provider);
+            base.OnWindowProviderUpdated(provider, providerFactory);
+            _launchWindowCommand = new LaunchWindowCommand(_windowsService, provider, providerFactory);
         }
     }
 }

@@ -4,20 +4,40 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ext="clr-namespace:WpfApp1.Extensions"
-        xmlns:local="clr-namespace:WpfApp1.Windows"
         xmlns:vm="clr-namespace:WpfApp1.ViewModels"
+        xmlns:cvt="clr-namespace:WpfApp1.Converters"
         mc:Ignorable="d"
         Title="LaunchedWindow" Height="450" Width="800"
         ext:WindowAttachedProperty.RefreshViewModelOnRendered="True"
         ext:ViewModelAttachedProperty.ViewModel="{x:Type vm:LaunchedWindowViewModel}">
+    <Window.Resources>
+        <cvt:VisibilityConverter x:Key="SyncVisbilityConverter" True="Hidden" False="Visible"/>
+        <cvt:EqualsVisilityConverter x:Key="NotEquals" Converter="{StaticResource SyncVisbilityConverter}"/>
+        <cvt:VisibilityConverter x:Key="UnSyncVisbilityConverter" True="Visible" False="Hidden"/>
+        <cvt:EqualsVisilityConverter x:Key="Equals" Converter="{StaticResource UnSyncVisbilityConverter}"/>
+    </Window.Resources>
     <Grid ext:GridExtendedProperties.GridMaxRows="8">
         <Label Content="{Binding ThisHandle}" ContentStringFormat="This Handle: {0}" ext:GridExtendedProperties.GridAutoRow="True"/>
         <Label Content="{Binding ParentHandle}" ContentStringFormat="Parent Handle: {0}" ext:GridExtendedProperties.GridAutoRow="True"/>
         <Label Content="{Binding OwnerHandle}" ContentStringFormat="Owner Handle: {0}" ext:GridExtendedProperties.GridAutoRow="True"/>
         <Label Content="{Binding AncestorHandle}" ContentStringFormat="Ancestor Handle: {0}" ext:GridExtendedProperties.GridAutoRow="True"/>
-            <Label Content="{Binding SetParentResult}" ContentStringFormat="Set Parent Result: {0}" ext:GridExtendedProperties.GridAutoRow="True"/>
-            <Label Content="{Binding OriginalAncestor}" ContentStringFormat="Original Ancestor: {0}" ext:GridExtendedProperties.GridAutoRow="True"/>
-            <Button Content="Sync Parent Window!" Command="{Binding SyncParentWindowCommand}" ext:GridExtendedProperties.GridAutoRow="True" CommandParameter="{Binding OwnerHandle}"/>
-            <Button Content="Un Sync Parent Window!" Command="{Binding UnSyncParentWindowCommand}" ext:GridExtendedProperties.GridAutoRow="True" CommandParameter="{Binding OriginalAncestor}"/>
+        <Label Content="{Binding SetParentResult}" ContentStringFormat="Set Parent Result: {0}" ext:GridExtendedProperties.GridAutoRow="True"/>
+        <Label Content="{Binding OriginalAncestor}" ContentStringFormat="Original Ancestor: {0}" ext:GridExtendedProperties.GridAutoRow="True"/>
+        <Button Content="Sync Parent Window!" Command="{Binding SyncParentWindowCommand}" ext:GridExtendedProperties.GridAutoRow="True" CommandParameter="{Binding OwnerHandle}">
+            <Button.Visibility>
+                <MultiBinding Converter="{StaticResource NotEquals}">
+                    <Binding Path="OwnerHandle"/>
+                    <Binding Path="AncestorHandle"/>
+                </MultiBinding>
+            </Button.Visibility>
+        </Button>
+        <Button Content="Un Sync Parent Window!" Command="{Binding UnSyncParentWindowCommand}" ext:GridExtendedProperties.GridAutoRow="True" CommandParameter="{Binding OriginalAncestor}">
+            <Button.Visibility>
+                <MultiBinding Converter="{StaticResource Equals}">
+                    <Binding Path="OwnerHandle"/>
+                    <Binding Path="AncestorHandle"/>
+                </MultiBinding>
+            </Button.Visibility>
+        </Button>
     </Grid>
 </Window>

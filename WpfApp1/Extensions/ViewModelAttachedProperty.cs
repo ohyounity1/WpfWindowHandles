@@ -7,8 +7,8 @@ namespace WpfApp1.Extensions
 {
     public static class ViewModelAttachedProperty
     {
-        public static readonly DependencyProperty ViewModelProperty = DependencyProperty.RegisterAttached(
-            nameof(ViewModelProperty).Replace("Property", string.Empty), typeof(Type), typeof(ViewModelAttachedProperty), new PropertyMetadata(null, ViewModelPropertyChangedCallback));
+        public static readonly DependencyProperty ViewModelProperty = RegisterAttached<Type>(
+            nameof(ViewModelProperty), ViewModelPropertyChangedCallback);
 
         private static void ViewModelPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -19,7 +19,7 @@ namespace WpfApp1.Extensions
                     element.DataContext = CommonServiceLocator.ServiceLocator.Current.GetInstance(viewModelType);
                     if(element is Window w && element.DataContext is WindowedViewModelBase vmb)
                     {
-                        vmb.WindowProvider = new DefaultWindowProvider(w);
+                        vmb.UpdateWindowProvider(new DefaultWindowProvider(w), (window) => new DefaultWindowProvider(window));
                     }
                 }
             }
@@ -30,5 +30,29 @@ namespace WpfApp1.Extensions
 
         public static void SetViewModel(DependencyObject dependency, Type newValue) =>
             dependency.SetValue(ViewModelProperty, newValue);
+
+
+        public static readonly DependencyProperty ParentImmediatelyProperty = RegisterAttached<bool>(
+            nameof(ParentImmediatelyProperty), ParentImmediatelyPropertyChangedCallback);
+
+        private static void ParentImmediatelyPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is Window w && w.DataContext is WindowedViewModelBase vmb)
+            {
+                vmb.UpdateParentImmediately((bool)e.NewValue);
+            }
+        }
+
+        public static bool GetParentImmediately(DependencyObject dependency) =>
+            (bool)dependency.GetValue(ParentImmediatelyProperty);
+
+        public static void SetParentImmediately(DependencyObject dependency, bool newValue) =>
+            dependency.SetValue(ParentImmediatelyProperty, newValue);
+
+        private static DependencyProperty RegisterAttached<T>(string propertyName, PropertyChangedCallback cb) =>
+            DependencyProperty.RegisterAttached(propertyName.Replace("Property", string.Empty), typeof(T), typeof(ViewModelAttachedProperty), new PropertyMetadata(default(T), cb));
+
+        private static DependencyProperty RegisterAttached<T>(string propertyName) =>
+            DependencyProperty.RegisterAttached(propertyName.Replace("Property", string.Empty), typeof(T), typeof(ViewModelAttachedProperty));
     }
 }

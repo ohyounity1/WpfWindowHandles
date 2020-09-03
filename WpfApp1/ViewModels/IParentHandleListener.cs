@@ -6,5 +6,6 @@ namespace WpfApp1.ViewModels
     {
         void UpdateHandles();
         IntPtr SetParentResult { get; set; }
+        bool ParentImmediately { get; set; }
     }
 }

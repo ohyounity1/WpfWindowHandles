@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfApp1"
         xmlns:ext="clr-namespace:WpfApp1.Extensions"
         xmlns:vm="clr-namespace:WpfApp1.ViewModels"
         mc:Ignorable="d"
@@ -24,6 +23,9 @@
         <Label Content="{Binding ParentHandle}" ContentStringFormat="Parent Handle: {0}" />
         <Label Content="{Binding OwnerHandle}" ContentStringFormat="Owner Handle: {0}" />
         <Label Content="{Binding AncestorHandle}" ContentStringFormat="Ancestor Handle: {0}" />
-        <Button Content="Launch New Window!" Command="{Binding LaunchWindowCommand}" />
+        <Grid ext:GridExtendedProperties.GridMaxColumns="2" ext:GridExtendedProperties.GridAutoRow="True">
+            <CheckBox Content="Parent Immediately?" IsChecked="{Binding ParentImmediately}" ext:GridExtendedProperties.GridAutoColumn="True"/>
+            <Button Content="Launch New Window!" Command="{Binding LaunchWindowCommand}" CommandParameter="{Binding ParentImmediately}" ext:GridExtendedProperties.GridAutoColumn="True"/>
+        </Grid>
     </Grid>
 </Window>

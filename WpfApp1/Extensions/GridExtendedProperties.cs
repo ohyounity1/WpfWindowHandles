@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,7 +6,7 @@ namespace WpfApp1.Extensions
 {
     public static class GridExtendedProperties
     {
-        #region GridMaxRowsSettings
+        #region GridRowsSettings
         public static readonly DependencyProperty GridMaxRowsProperty = 
             RegisterAttached<int>(nameof(GridMaxRowsProperty), OnGridMaxRowsPropertyChanged);
 
@@ -101,6 +97,37 @@ namespace WpfApp1.Extensions
         public static void SetGridMaxColumns(DependencyObject obj, int maxColumns) =>
             obj.SetValue(GridMaxColumnsProperty, maxColumns);
 
+        public static readonly DependencyProperty GridAutoColumnCountProperty =
+            RegisterAttached<int>(nameof(GridAutoColumnCountProperty));
+
+        public static int GetGridAutoColumnCount(DependencyObject obj) =>
+            (int)obj.GetValue(GridAutoColumnCountProperty);
+
+        public static void SetGridAutoColumnCount(DependencyObject obj, int maxRows) =>
+            obj.SetValue(GridAutoColumnCountProperty, maxRows);
+
+
+        public static readonly DependencyProperty GridAutoColumnProperty =
+            RegisterAttached<bool>(nameof(GridAutoColumnProperty), OnGridAutoColumnPropertyChanged);
+
+        private static void OnGridAutoColumnPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is FrameworkElement fe)
+            {
+                if (fe.Parent is Grid g)
+                {
+                    var currentColumn = GetGridAutoColumnCount(g);
+                    Grid.SetColumn(fe, currentColumn);
+                    SetGridAutoColumnCount(g, currentColumn + 1);
+                }
+            }
+        }
+
+        public static bool GetGridAutoColumn(DependencyObject obj) =>
+            (bool)obj.GetValue(GridAutoColumnProperty);
+
+        public static void SetGridAutoColumn(DependencyObject obj, bool autoRow) =>
+            obj.SetValue(GridAutoColumnProperty, autoRow);
         #endregion
 
         private static DependencyProperty RegisterAttached<T>(string propertyName, PropertyChangedCallback cb) =>

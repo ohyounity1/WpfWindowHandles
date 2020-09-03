@@ -11,18 +11,22 @@ namespace WpfApp1.ViewModels.Commands
 
         private readonly IWindowService _windowService;
         private readonly IWindowProvider _windowProvider;
+        private readonly Func<Window, IWindowProvider> _providerFactory;
 
-        public LaunchWindowCommand(IWindowService windowService, IWindowProvider provider)
+        public LaunchWindowCommand(IWindowService windowService, 
+            IWindowProvider provider, 
+            Func<Window, IWindowProvider> providerFactory)
         {
             _windowService = windowService;
             _windowProvider = provider;
+            _providerFactory = providerFactory;
         }
 
         public bool CanExecute(object parameter) => true;
 
         public void Execute(object parameter)
         {
-            _windowService.LaunchNewWindow(_windowProvider);
+            _windowService.LaunchNewWindow(_windowProvider, _providerFactory, (bool)parameter);
         }
 
         public void RefreshCanExecute()
