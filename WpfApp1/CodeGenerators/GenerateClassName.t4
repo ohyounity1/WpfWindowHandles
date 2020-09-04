@@ -1,0 +1,42 @@
+﻿<#@ import namespace="System" #>
+<#@ import namespace="System.CodeDom.Compiler" #>
+<#+
+	[Flags]
+	private enum ClassFlags
+	{
+		PUBLIC = 1, 
+		PRIVATE = 2,
+		INTERNAL = 4,
+		STATIC = 8
+	}
+
+	private bool HasClassFlag(ClassFlags @enum, ClassFlags test)
+	{
+		return((@enum & test) == test);
+	}
+
+	private string GenerateClassName(string className, ClassFlags classFlags)
+	{
+		var generatedClassHeader = string.Empty;
+		if(HasClassFlag(classFlags, ClassFlags.PUBLIC))
+		{
+			generatedClassHeader += "public";
+		}
+		else if(HasClassFlag(classFlags, ClassFlags.PRIVATE))
+		{
+			generatedClassHeader += "private";
+		}
+		else if(HasClassFlag(classFlags, ClassFlags.INTERNAL))
+		{
+			generatedClassHeader += "internal";
+		}
+
+		if(HasClassFlag(classFlags, ClassFlags.STATIC))
+		{
+			generatedClassHeader += " static";
+		}
+
+		generatedClassHeader += $" class {className}";
+		return generatedClassHeader;
+	}
+#>

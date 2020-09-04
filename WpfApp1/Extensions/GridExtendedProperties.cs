@@ -14,6 +14,7 @@ namespace WpfApp1.Extensions
         {
             if (d is Grid g)
             {
+                var t = typeof(int);
                 try
                 {
                     var maxRows = (int)e.NewValue;
@@ -25,6 +26,11 @@ namespace WpfApp1.Extensions
                 }
                 catch (Exception)
                 {
+                    switch(d)
+                    {
+                        case Grid g1:
+                            break;
+                    }
 
                 }
             }

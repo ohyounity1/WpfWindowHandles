@@ -1,0 +1,104 @@
+﻿<#@ include file=".\GenerateCodeHelpers.t4" once="true" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.CodeDom.Compiler" #>
+<#+
+	private void GenerateAttachedPropertyFactoryMethods(string className)
+	{
+		WriteLine("//////////////////////////////////////////////////////////////////////////////");
+		WriteLine("/*These methods are generated with the T4 template, please DO NOT MODIFY!!! */");
+		WriteLine("//////////////////////////////////////////////////////////////////////////////");
+		WriteLine("private static DependencyProperty RegisterAttached<T>(string propertyName, PropertyChangedCallback cb) =>");
+		PushIndent("\t");
+		WriteLine($"DependencyProperty.RegisterAttached(propertyName.Replace(\"Property\", string.Empty), typeof(T), typeof({className}), new PropertyMetadata(default(T), cb));");
+		PopIndent();
+
+		WriteLine("private static DependencyProperty RegisterAttached<T>(string propertyName) =>");
+		PushIndent("\t");
+		WriteLine($"DependencyProperty.RegisterAttached(propertyName.Replace(\"Property\", string.Empty), typeof(T), typeof({className}));");
+		PopIndent();
+	}
+
+	private void GenerateGetterSetter(string propertyName, Type type)
+	{
+		var nameOfProperty = propertyName.Replace("Property", string.Empty);
+		var nameOfPropertyVariable = char.ToLower(nameOfProperty[0]) + nameOfProperty.Substring(1);
+
+		if(type == typeof(int))
+		{
+			WriteLine($"public static int Get{nameOfProperty}(DependencyObject obj) =>");
+			PushIndent("\t");
+			WriteLine($"(int)obj.GetValue({propertyName});");
+		}
+		else if(type == typeof(bool))
+		{
+			WriteLine($"public static bool Get{nameOfProperty}(DependencyObject obj) =>");
+			PushIndent("\t");
+			WriteLine($"(bool)obj.GetValue({propertyName});");
+		}
+		else
+		{
+			WriteLine($"public static {type.Name} Get{nameOfProperty}(DependencyObject obj) =>");
+			PushIndent("\t");
+			WriteLine($"obj.GetValue({propertyName}) as {type.Name};");
+		}
+		PopIndent();
+
+		if(type == typeof(int))
+		{
+			WriteLine($"public static void Set{nameOfProperty}(DependencyObject obj, int {nameOfPropertyVariable}) =>");
+		}
+		else if(type == typeof(bool))
+		{
+			WriteLine($"public static void Set{nameOfProperty}(DependencyObject obj, bool {nameOfPropertyVariable}) =>");
+		}
+		else
+		{
+			WriteLine($"public static void Set{nameOfProperty}(DependencyObject obj, {type.Name} {nameOfPropertyVariable}) =>");
+		}
+		PushIndent("\t");
+        WriteLine($"obj.SetValue({propertyName}, {nameOfPropertyVariable});");
+		PopIndent();
+	}
+
+	private void GenerateAttachedProperty(string propertyName, Type type)
+	{
+		WriteLine($"public static readonly DependencyProperty {propertyName} = ");
+		PushIndent("\t");
+		if(type == typeof(int))
+		{
+			WriteLine($"RegisterAttached<int>(nameof({propertyName}));");
+		}
+		else if(type == typeof(bool))
+		{
+			WriteLine($"RegisterAttached<bool>(nameof({propertyName}));");
+		}
+		else
+		{
+			WriteLine($"RegisterAttached<{type.Name}>(nameof({propertyName}));");
+		}
+		PopIndent();
+
+		GenerateGetterSetter(propertyName, type);
+	}
+
+	private void GenerateAttachedProperty(string propertyName, Type type, string changeMethod)
+	{
+		WriteLine($"public static readonly DependencyProperty {propertyName} = ");
+		PushIndent("\t");
+		if(type == typeof(int))
+		{
+			WriteLine($"RegisterAttached<int>(nameof({propertyName}), {changeMethod});");
+		}
+		else if(type == typeof(bool))
+		{
+			WriteLine($"RegisterAttached<bool>(nameof({propertyName}), {changeMethod});");
+		}
+		else
+		{
+			WriteLine($"RegisterAttached<{type.Name}>(nameof({propertyName}), {changeMethod});");
+		}
+		PopIndent();
+
+		GenerateGetterSetter(propertyName, type);
+	}
+#>

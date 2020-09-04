@@ -75,11 +75,18 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="CodeGenerators\DependencyPropertyAttribute.cs" />
     <Compile Include="Converters\BooleanConverterBase.cs" />
     <Compile Include="Converters\EqualsComparisonConverter.cs" />
     <Compile Include="Converters\ValueConverterBase.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Extensions\AttachedPropertiesHelper.cs" />
+    <Compile Include="Extensions\GridAttachedProperties.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GridAttachedProperties.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Extensions\GridAttachedProperties_t.cs" />
     <Compile Include="Extensions\GridExtendedProperties.cs" />
     <Compile Include="Extensions\LaunchedWindowViewModelAttachedProperty.cs" />
     <Compile Include="Extensions\ViewModelAttachedProperty.cs" />
@@ -143,6 +150,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="CodeGenerators\GenerateAttachedProperty.t4" />
+    <None Include="CodeGenerators\GenerateClassName.t4" />
+    <None Include="CodeGenerators\GenerateCodeHelpers.t4" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -152,5 +162,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Extensions\GridAttachedProperties.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GridAttachedProperties.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

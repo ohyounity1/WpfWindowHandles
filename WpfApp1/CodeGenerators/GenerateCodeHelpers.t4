@@ -1,0 +1,16 @@
+﻿<#@ import namespace="System" #>
+<#@ import namespace="System.CodeDom.Compiler" #>
+<#+
+	private string GenerateTypeString(Type type)
+	{
+		if(type == typeof(int))
+		{
+			return "int";
+		}
+		else if(type == typeof(bool))
+		{
+			return "bool";
+		}
+		return type.Name;
+	}
+#>
